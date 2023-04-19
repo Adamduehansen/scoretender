@@ -24,9 +24,11 @@ async function getAllScores(context: Context) {
 }
 
 async function addScore(context: Context) {
+  const { name, score } = await context.request.body().value;
+
   const { data, error } = await supabase
     .from('score')
-    .insert([{ name: 'aha', score: 200 }]);
+    .insert([{ name: name, score: score }]);
 
   console.log(data);
   console.log(error);
