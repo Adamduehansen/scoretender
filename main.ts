@@ -5,28 +5,32 @@ import {
 } from 'https://deno.land/x/oak@v12.1.0/mod.ts';
 import { oakCors } from 'https://deno.land/x/cors@v1.2.2/mod.ts';
 import { load } from 'https://deno.land/std@0.184.0/dotenv/mod.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.20.0';
+import { Database } from './supabase.ts';
 
-interface Score {
-  id: string;
-  name: string;
-  score: number;
-}
+const configData = await load();
 
-const scoresDb: Score[] = [];
+const supabaseUrl = configData['SUPABASE_URL'];
+const supabaseKey = configData['SUPABASE_KEY'];
 
-function getAllScores(context: Context) {
-  context.response.body = scoresDb;
+const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+
+async function getAllScores(context: Context) {
+  const { data, error } = await supabase.from('score').select('*');
+  console.log(data);
+  console.log(error);
+
+  context.response.body = data;
 }
 
 async function addScore(context: Context) {
-  const newScore = (await context.request.body().value) as Pick<
-    Score,
-    'name' | 'score'
-  >;
-  scoresDb.push({
-    id: crypto.randomUUID(),
-    ...newScore,
-  });
+  const { data, error } = await supabase
+    .from('score')
+    .insert([{ name: 'aha', score: 200 }]);
+
+  console.log(data);
+  console.log(error);
+
   context.response.status = 201;
 }
 
@@ -42,7 +46,6 @@ const app = new Application();
 app.use(oakCors());
 app.use(router.routes());
 
-const configData = await load();
 const port = Number(configData['PORT']);
 
 if (isNaN(port)) {
