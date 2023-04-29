@@ -1,17 +1,20 @@
-import {
-  Application,
-  Context,
-  Router,
-} from 'https://deno.land/x/oak@v12.1.0/mod.ts';
-import { oakCors } from 'https://deno.land/x/cors@v1.2.2/mod.ts';
-import { load } from 'https://deno.land/std@0.184.0/dotenv/mod.ts';
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.20.0';
+import { createClient, Context, Router, Application, oakCors } from './deps.ts';
 import { Database } from './supabase.ts';
 
-const configData = await load();
+const supabaseUrl = Deno.env.get('SUPABASE_URL');
+const supabaseKey = Deno.env.get('SUPABASE_KEY');
 
-const supabaseUrl = configData['SUPABASE_URL'];
-const supabaseKey = configData['SUPABASE_KEY'];
+if (supabaseUrl === undefined) {
+  throw new Error(
+    'Supabase URL could not be loaded from environment variables.'
+  );
+}
+
+if (supabaseKey === undefined) {
+  throw new Error(
+    'Supabase key could not be loaded from environment variables.'
+  );
+}
 
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
@@ -48,7 +51,7 @@ const app = new Application();
 app.use(oakCors());
 app.use(router.routes());
 
-const port = Number(configData['PORT']);
+const port = Number(Deno.env.get('PORT'));
 
 if (isNaN(port)) {
   throw new Error('Port environment variable is not a number!');
