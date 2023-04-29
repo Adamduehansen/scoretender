@@ -1,4 +1,11 @@
-import { createClient, Context, Router, Application, oakCors } from './deps.ts';
+import {
+  createClient,
+  Context,
+  Router,
+  Application,
+  oakCors,
+  green,
+} from './deps.ts';
 import { Database } from './supabase.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
@@ -20,7 +27,7 @@ const supabase = createClient<Database>(supabaseUrl, supabaseKey);
 
 async function getAllScores(context: Context) {
   const { data, error } = await supabase.from('score').select('*');
-  console.log(data);
+
   console.log(error);
 
   context.response.body = data;
@@ -29,12 +36,11 @@ async function getAllScores(context: Context) {
 async function addScore(context: Context) {
   const { name, score } = await context.request.body().value;
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('score')
     .insert([{ name: name, score: score }]);
 
-  console.log(data);
-  console.log(error);
+  console.log({ error });
 
   context.response.status = 201;
 }
@@ -49,6 +55,12 @@ router.post('/score', addScore);
 
 const app = new Application();
 app.use(oakCors());
+app.use(async (context, next) => {
+  await next();
+  const { method, url } = context.request;
+  const logMessage = green(`${method} ${url}`);
+  console.log(logMessage);
+});
 app.use(router.routes());
 
 const port = Number(Deno.env.get('PORT'));
