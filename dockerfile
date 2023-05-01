@@ -11,9 +11,6 @@ WORKDIR /app
 # Run user as Deno.
 USER deno
 
-COPY deps.ts .
-RUN deno cache deps.ts
-
 ADD . .
 
 RUN deno cache main.ts

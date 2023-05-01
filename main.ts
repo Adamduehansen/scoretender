@@ -1,12 +1,18 @@
-import {
-  createClient,
-  Context,
-  Router,
-  Application,
-  oakCors,
-  green,
-} from './deps.ts';
+// import {
+//   createClient,
+//   Context,
+//   Router,
+//   Application,
+//   oakCors,
+//   green,
+// } from './deps.ts';
+// import { create } from 'supabase';
+import { green } from 'fmt/colors.ts';
+import { createClient } from 'supabase';
+import { Context, Router, Application } from 'oak';
+import { oakCors } from 'cors';
 import { Database } from './supabase.ts';
+import 'https://deno.land/std@0.185.0/dotenv/load.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_KEY');
