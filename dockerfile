@@ -1,5 +1,7 @@
 # Build image:    "docker build -t scoretender ."
 # Run image       "docker run -p 8000:8000 -e SUPABASE_URL= -e SUPABASE_KEY= -e PORT=8000 scoretender
+# Add tag         "docker image tag scoretender:latest adamduehansen/scoretender:latest"
+# Push image      "docker image push adamduehansen/scoretender:latest"
 
 FROM denoland/deno:latest
 
