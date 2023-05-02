@@ -1,12 +1,3 @@
-// import {
-//   createClient,
-//   Context,
-//   Router,
-//   Application,
-//   oakCors,
-//   green,
-// } from './deps.ts';
-// import { create } from 'supabase';
 import { green } from 'fmt/colors.ts';
 import { createClient } from 'supabase';
 import { Context, Router, Application } from 'oak';
